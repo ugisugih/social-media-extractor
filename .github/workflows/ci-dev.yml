@@ -1,0 +1,29 @@
+name: CI - Dev (Social Media Extractor)
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  enforce:
+    uses: ./.github/workflows/enforce-branch-flow.yml
+
+  ci:
+    needs: enforce
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Docker build check
+        run: docker build -t social-media-extractor:ci .

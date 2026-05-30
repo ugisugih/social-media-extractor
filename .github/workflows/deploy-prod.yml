@@ -49,6 +49,10 @@ jobs:
             echo "Stopping any container on port 3009..."
             docker ps -q --filter "publish=3009" | xargs -r docker rm -f || true
 
+            echo "Ensuring cookies are enabled..."
+            sed -i 's/ENABLE_COOKIES=false/ENABLE_COOKIES=true/' .env.prod || true
+            grep -q 'ENABLE_COOKIES=true' .env.prod || echo 'ENABLE_COOKIES=true' >> .env.prod
+
             echo "Restarting container..."
             docker rm -f social-media-extractor || true
 

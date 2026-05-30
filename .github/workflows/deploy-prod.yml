@@ -46,12 +46,15 @@ jobs:
             echo "Loading image..."
             docker load < app.tar
 
+            echo "Stopping any container on port 3009..."
+            docker ps -q --filter "publish=3009" | xargs -r docker rm -f || true
+
             echo "Restarting container..."
             docker rm -f social-media-extractor || true
 
             docker run -d \
               --name social-media-extractor \
-              -p 3000:3000 \
+              -p 3009:3000 \
               --env-file .env.prod \
               -v ~/apps/social-media-extractor/cookies.txt:/app/cookies.txt:ro \
               --restart unless-stopped \

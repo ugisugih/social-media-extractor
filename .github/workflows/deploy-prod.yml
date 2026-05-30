@@ -60,7 +60,8 @@ jobs:
               --name social-media-extractor \
               -p 3009:3000 \
               --env-file .env.prod \
-              -v ~/apps/social-media-extractor/cookies.txt:/app/cookies.txt:ro \
+              -v ~/apps/social-media-extractor/cookies.txt:/app/cookies.txt \
+              -v /tmp/media-downloads:/tmp/media-downloads \
               --restart unless-stopped \
               social-media-extractor:prod-latest
 

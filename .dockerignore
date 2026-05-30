@@ -12,9 +12,6 @@ cookies.txt
 .dockerignore
 .eslintrc.js
 .prettierrc
-tsconfig.json
-tsconfig.build.json
-nest-cli.json
 test
 coverage
 .nyc_output

@@ -1,0 +1,27 @@
+name: Enforce Branch Rules
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  enforce:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate branch flow
+        run: |
+          HEAD="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          BASE="${{ github.base_ref }}"
+
+          echo "HEAD=$HEAD"
+          echo "BASE=$BASE"
+
+          if [[ "$BASE" == "main" && "$HEAD" != "dev" ]]; then
+            echo "❌ ERROR: only dev may merge into main"
+            exit 1
+          fi
+
+          echo "✅ Branch flow OK"

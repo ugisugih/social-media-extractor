@@ -1,0 +1,72 @@
+name: Deploy - Production (Social Media Extractor)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  enforce:
+    uses: ./.github/workflows/enforce-branch-flow.yml
+
+  deploy:
+    needs: enforce
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -t social-media-extractor:prod-${{ github.sha }} \
+            -t social-media-extractor:prod-latest \
+            .
+
+      - name: Save image
+        run: docker save social-media-extractor:prod-latest > app.tar
+
+      - name: Copy image to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          source: 'app.tar'
+          target: '~/apps/social-media-extractor'
+
+      - name: Deploy on VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd ~/apps/social-media-extractor
+
+            echo "Loading image..."
+            docker load < app.tar
+
+            echo "Restarting container..."
+            docker rm -f social-media-extractor || true
+
+            docker run -d \
+              --name social-media-extractor \
+              -p 3000:3000 \
+              --env-file .env.prod \
+              -v ~/apps/social-media-extractor/cookies.txt:/app/cookies.txt:ro \
+              --restart unless-stopped \
+              social-media-extractor:prod-latest
+
+            echo "Cleaning old images..."
+
+            docker images social-media-extractor \
+              --format "{{.Repository}}:{{.Tag}}" \
+              | grep prod \
+              | grep -v latest \
+              | tail -n +3 \
+              | xargs -r docker rmi || true
+
+            docker image prune -f || true
+            docker container prune -f || true
+
+            rm -f app.tar || true

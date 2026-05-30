@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - /tmp/media-downloads:/tmp/media-downloads
+      - ./temp:/app/temp
+      - ./cookies.txt:/app/cookies.txt:ro
+    environment:
+      - PORT=3000
+      - DOWNLOAD_PATH=/tmp/media-downloads
+      - TEMP_STORAGE_PATH=/app/temp
+      - MAX_FILE_SIZE=524288000
+      - YTDLP_PATH=yt-dlp
+      - FFMPEG_PATH=ffmpeg
+      - COOKIE_FILE_PATH=/app/cookies.txt
+      - ENABLE_COOKIES=${ENABLE_COOKIES:-false}
+      - CORS_ORIGIN=*
+      - RATE_LIMIT_TTL=60
+      - RATE_LIMIT_MAX=10
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

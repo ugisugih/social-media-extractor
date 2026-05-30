@@ -70,11 +70,11 @@ export class MetadataExtractorService {
         });
 
         return metadata;
-      } catch (error) {
-        lastError = error;
-        const errorMsg = error.message || '';
+      } catch (error: unknown) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        const errorMsg = lastError.message || '';
 
-        if (errorMsg.includes('There is no video in this post')) {
+        if (errorMsg.includes('There is no video in this post') || errorMsg.includes('No video formats found')) {
           this.logger.log('Instagram image post detected, creating fallback metadata', { url });
           return this.createImagePostMetadata(url);
         }
@@ -132,8 +132,9 @@ export class MetadataExtractorService {
       }
 
       return results;
-    } catch (error) {
-      this.logger.error('Playlist extraction failed', error.message, { url });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error('Playlist extraction failed', message, { url });
       throw error;
     }
   }

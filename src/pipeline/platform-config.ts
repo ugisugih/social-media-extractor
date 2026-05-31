@@ -12,7 +12,7 @@ export interface PlatformConfig {
 export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
   tiktok: {
     name: 'tiktok',
-    format: 'h264_720p_1289746-0/h264_540p_490678-0/h264*',
+    format: 'best[ext=mp4]/best',
     mergeOutputFormat: 'mp4',
     writeThumbnail: false,
     convertThumbnails: false,

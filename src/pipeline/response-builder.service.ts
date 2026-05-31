@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PipelineResult, MediaMetadata, DownloadedMedia } from './types';
 import { LoggerService } from './logger.service';
 
 @Injectable()
 export class ResponseBuilderService {
-  constructor(private readonly logger: LoggerService) {}
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly configService: ConfigService,
+  ) {}
 
   buildSuccess(
     metadata: MediaMetadata,
@@ -15,6 +19,14 @@ export class ResponseBuilderService {
     });
 
     const hasMedia = downloadedMedia.length > 0;
+    const host = this.configService.get<string>('API_HOST') || 'localhost';
+    const port = this.configService.get<string>('PORT') || '3000';
+    const baseUrl = `http://${host}:${port}`;
+
+    const mediaWithUrls = downloadedMedia.map((item) => ({
+      ...item,
+      downloadUrl: `${baseUrl}/files/${item.filename}`,
+    }));
 
     return {
       success: hasMedia,
@@ -29,7 +41,7 @@ export class ResponseBuilderService {
       author: metadata.author,
       uploadDate: metadata.uploadDate,
       duration: metadata.duration,
-      media: downloadedMedia,
+      media: mediaWithUrls,
       rawMetadata: metadata.rawMetadata,
     };
   }

@@ -46,6 +46,10 @@ export class ProcessResponseDto {
         filePath: { type: 'string', example: '/downloads/video_123.mp4' },
         size: { type: 'number', example: 12345678 },
         filename: { type: 'string', example: 'video_123.mp4' },
+        downloadUrl: {
+          type: 'string',
+          example: 'http://localhost:3000/files/video_123.mp4',
+        },
       },
     },
   })
@@ -54,6 +58,7 @@ export class ProcessResponseDto {
     filePath: string;
     size: number;
     filename: string;
+    downloadUrl: string;
   }>;
 
   @ApiProperty({ required: false })

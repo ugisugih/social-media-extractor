@@ -6,6 +6,7 @@ import { PipelineModule } from './pipeline/pipeline.module';
 import { ProcessController } from './controllers/process.controller';
 import { MediaController } from './controllers/media.controller';
 import { FilesController } from './controllers/files.controller';
+import { DownloadController } from './controllers/download.controller';
 import { HealthController } from './controllers/health.controller';
 
 @Module({
@@ -21,7 +22,13 @@ import { HealthController } from './controllers/health.controller';
     }),
     PipelineModule,
   ],
-  controllers: [ProcessController, MediaController, FilesController, HealthController],
+  controllers: [
+    ProcessController,
+    MediaController,
+    FilesController,
+    DownloadController,
+    HealthController,
+  ],
   providers: [
     {
       provide: APP_GUARD,

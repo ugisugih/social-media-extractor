@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { PipelineModule } from './pipeline/pipeline.module';
 import { ProcessController } from './controllers/process.controller';
 import { MediaController } from './controllers/media.controller';
+import { FilesController } from './controllers/files.controller';
 import { HealthController } from './controllers/health.controller';
 
 @Module({
@@ -20,7 +21,7 @@ import { HealthController } from './controllers/health.controller';
     }),
     PipelineModule,
   ],
-  controllers: [ProcessController, MediaController, HealthController],
+  controllers: [ProcessController, MediaController, FilesController, HealthController],
   providers: [
     {
       provide: APP_GUARD,

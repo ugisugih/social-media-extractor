@@ -72,6 +72,7 @@ export interface DownloadedMedia {
   filePath: string;
   size: number;
   filename: string;
+  downloadUrl?: string;
   originalUrl?: string;
 }
 

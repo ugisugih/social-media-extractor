@@ -59,10 +59,6 @@ export class DownloadController {
 
     const filename = path.basename(filePath);
 
-    res.set({
-      'Content-Disposition': `attachment; filename="${filename}"`,
-    });
-
-    res.sendFile(filePath);
+    res.download(filePath, filename);
   }
 }

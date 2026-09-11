@@ -58,6 +58,7 @@ jobs:
 
             docker run -d \
               --name social-media-extractor \
+              --network app-network \
               -p 3009:3000 \
               --env-file .env.prod \
               -v ~/apps/social-media-extractor/cookies.txt:/app/cookies.txt \
